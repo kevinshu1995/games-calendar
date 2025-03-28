@@ -82,6 +82,37 @@
             margin: 50px 0;
             color: #e74c3c;
         }
+        .ical-container {
+            margin-top: 15px;
+        }
+        .ical-label {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        .ical-url {
+            font-family: monospace;
+            font-size: 0.85em;
+            color: #34495e;
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 4px;
+            word-break: break-all;
+            display: block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .ical-url:hover {
+            background-color: #e0e0e0;
+        }
+        .ical-url.copied {
+            background-color: #27ae60;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -122,7 +153,10 @@
                 <div class="calendar-description">${calendar.description}</div>
                 <div class="calendar-links">
                     <a href="${calendar.publicUrl}" class="calendar-link" target="_blank">View Calendar</a>
-                    <a href="${calendar.icalUrl}" class="calendar-link" target="_blank">Subscribe (iCal)</a>
+                </div>
+                <div class="ical-container">
+                    <div class="ical-label">iCal URL</div>
+                    <div class="ical-url" data-url="${calendar.icalUrl}">${calendar.icalUrl}</div>
                 </div>
             `;
 
@@ -148,8 +182,32 @@
             }
         }
 
+        function copyIcalUrl(event) {
+            const icalUrl = event.currentTarget.dataset.url;
+            navigator.clipboard.writeText(icalUrl).then(() => {
+                event.currentTarget.textContent = 'Copied!';
+                event.currentTarget.classList.add('copied');
+                setTimeout(() => {
+                    event.currentTarget.textContent = icalUrl;
+                    event.currentTarget.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy URL. Please try again.');
+            });
+        }
+
         // Load calendars when the page loads
-        document.addEventListener('DOMContentLoaded', fetchCalendars);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCalendars();
+            
+            // Add click event listener to all ical-url elements
+            document.addEventListener('click', (event) => {
+                if (event.target.classList.contains('ical-url')) {
+                    copyIcalUrl(event);
+                }
+            });
+        });
     </script>
 </body>
 </html>
