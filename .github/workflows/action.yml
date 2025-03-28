@@ -1,0 +1,50 @@
+name: Sports Calendar Creator
+
+on:
+  workflow_call:
+    inputs:
+      sports:
+        description: 'Comma-separated list of sports to process (e.g. "bwf")'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      GOOGLE_CALENDAR_CREDENTIALS:
+        description: 'Google Calendar API credentials JSON'
+        required: true
+      GOOGLE_TOKEN:
+        description: 'Google Calendar API token JSON'
+        required: true
+
+jobs:
+  create-calendars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set up credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CALENDAR_CREDENTIALS }}' > credentials.json
+          echo '${{ secrets.GOOGLE_TOKEN }}' > token.json
+        
+      - name: Create calendars
+        run: |
+          if [ -n "${{ inputs.sports }}" ]; then
+            node src/index.js ${{ inputs.sports }}
+          else
+            node src/index.js
+          fi
+        env:
+          GOOGLE_CALENDAR_CREDENTIALS: credentials.json
+          GOOGLE_CALENDAR_TOKEN: token.json
+          API_BASE_URL: 'https://the-static-api.vercel.app'
