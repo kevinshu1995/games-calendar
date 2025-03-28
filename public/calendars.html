@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Calendar Viewer</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .calendar-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .calendar-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .calendar-card:hover {
+            transform: translateY(-5px);
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .calendar-name {
+            color: #2c3e50;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .calendar-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .calendar-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .calendar-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .calendar-link:hover {
+            text-decoration: underline;
+        }
+        .calendar-description {
+            color: #7f8c8d;
+            margin: 10px 0;
+        }
+        .calendar-stats {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .loading {
+            text-align: center;
+            margin: 50px 0;
+            color: #7f8c8d;
+        }
+        .error {
+            text-align: center;
+            margin: 50px 0;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sports Calendars</h1>
+    <div class="loading">Loading calendars...</div>
+    <div class="calendar-list" id="calendarList"></div>
+    <div class="error" style="display: none;"></div>
+
+    <script>
+        async function fetchCalendars() {
+            try {
+                const response = await fetch('/api/calendars');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch calendars');
+                }
+                const calendars = await response.json();
+                displayCalendars(calendars);
+            } catch (error) {
+                console.error('Error fetching calendars:', error);
+                const errorDiv = document.querySelector('.error');
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'Error loading calendars. Please try again later.';
+            }
+        }
+
+        function createCalendarCard(calendar) {
+            const card = document.createElement('div');
+            card.className = 'calendar-card';
+
+            card.innerHTML = `
+                <div class="calendar-header">
+                    <div class="calendar-name">${calendar.name}</div>
+                    <div class="calendar-color" style="background-color: ${calendar.color}"></div>
+                </div>
+                <div class="calendar-description">${calendar.description}</div>
+                <div class="calendar-links">
+                    <a href="${calendar.publicUrl}" class="calendar-link" target="_blank">View Calendar</a>
+                    <a href="${calendar.icalUrl}" class="calendar-link" target="_blank">Subscribe (iCal)</a>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function displayCalendars(calendars) {
+            const container = document.getElementById('calendarList');
+            const loadingDiv = document.querySelector('.loading');
+            const errorDiv = document.querySelector('.error');
+
+            loadingDiv.style.display = 'none';
+            errorDiv.style.display = 'none';
+            container.innerHTML = '';
+
+            if (calendars && calendars.length > 0) {
+                calendars.forEach(calendar => {
+                    const card = createCalendarCard(calendar);
+                    container.appendChild(card);
+                });
+            } else {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No calendars found.</p>';
+            }
+        }
+
+        // Load calendars when the page loads
+        document.addEventListener('DOMContentLoaded', fetchCalendars);
+    </script>
+</body>
+</html>

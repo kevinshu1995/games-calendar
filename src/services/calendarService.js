@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { authorize } from '../utils/authenticate.js';
+import { updateCalendarInfo } from '../utils/calendarStorage.js';
 
 // 獲取當前目錄
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -99,6 +100,9 @@ async function getOrCreateCalendar(calendar, sportId) {
     if (existingCalendar) {
       console.log(`Found existing calendar for ${sportId}: ${existingCalendar.id}`);
       
+      // 更新日曆 ID 到儲存中
+      await updateCalendarInfo(sportId, existingCalendar.id);
+      
       // 確保現有日曆的權限設置是正確的
       await updateCalendarAccessSettings(calendar, existingCalendar.id);
       
@@ -120,6 +124,9 @@ async function getOrCreateCalendar(calendar, sportId) {
     
     // 獲取創建的日曆 ID
     const calendarId = newCalendar.data.id;
+    
+    // 儲存日曆 ID
+    await updateCalendarInfo(sportId, calendarId);
     
     // 設置日曆顏色
     const colorId = CALENDAR_COLORS[sportId] || CALENDAR_COLORS.default;
