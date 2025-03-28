@@ -10,6 +10,8 @@ This service automatically fetches sports tournament data from various APIs and 
 - Can be triggered via GitHub Actions from external repositories
 - Supports BWF (Badminton World Federation) tournaments out of the box
 - Extensible design to add support for more sports/APIs
+- Prevents duplicate event creation through event checking
+- Public calendar access with developer-only edit permissions
 
 ## Architecture
 
@@ -44,7 +46,7 @@ The service uses a central API index at `https://the-static-api.vercel.app/api/i
 
 1. Clone this repository
 2. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
 
@@ -54,6 +56,7 @@ The service uses a central API index at `https://the-static-api.vercel.app/api/i
    - Create a Service Account and download the JSON key
    - Save the Service Account key as `credentials.json` in the project root (this file is gitignored)
    - Share your Google Calendar with the Service Account email (look in the credentials.json file for `client_email`)
+   - Ensure the calendar is set to public access while maintaining developer-only edit permissions
 
 4. Configure environment variables (create a `.env` file):
    ```
@@ -62,13 +65,29 @@ The service uses a central API index at `https://the-static-api.vercel.app/api/i
    API_BASE_URL=https://the-static-api.vercel.app
    ```
 
+### Calendar Access Settings
+
+By default, the service will:
+- Create public calendars that anyone can view
+- Restrict editing permissions to the service account only
+- Generate public subscription links (iCal and web) for calendar sharing
+- Maintain calendar color coding for different sports types
+
+### Event Handling
+
+The service automatically:
+- Checks for existing events before creating new ones
+- Uses tournament name and date range to identify duplicates
+- Prevents duplicate event creation while maintaining event history
+- Provides detailed logging for event creation and error handling
+
 ## Usage
 
 ### Local Development
 
 Run the service locally to test:
 
-```
+```bash
 npm run start
 ```
 
