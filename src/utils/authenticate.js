@@ -28,6 +28,7 @@ async function authenticate() {
     console.log('Reading credentials from:', CREDENTIALS_PATH);
     const content = await fs.readFile(CREDENTIALS_PATH, 'utf8');
     const credentials = JSON.parse(content);
+    console.log('credentials', credentials)
     
     await getAccessToken(credentials);
   } catch (err) {

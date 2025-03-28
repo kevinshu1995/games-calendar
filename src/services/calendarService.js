@@ -23,8 +23,24 @@ const CALENDAR_COLORS = {
  */
 export async function createOrUpdateCalendar(sportId, data) {
   try {
-    // 獲取驗證客戶端
-    const auth = await getAuthClient();
+    // 檢查是否有賽事數據
+    if (!data || !data.tournaments || data.tournaments.length === 0) {
+      console.warn(`No tournament data available for ${sportId}, skipping calendar creation`);
+      return null;
+    }
+    
+    // 嘗試獲取驗證客戶端
+    let auth;
+    try {
+      auth = await getAuthClient();
+    } catch (error) {
+      console.warn(`Google Calendar authentication failed: ${error.message}`);
+      console.warn('Calendar creation skipped. To create calendars, please set up Google Calendar credentials.');
+      
+      // 返回模擬的日曆 ID
+      return `mock-calendar-${sportId}`;
+    }
+    
     const calendar = google.calendar({ version: 'v3', auth });
     
     // 獲取或創建日曆
@@ -55,7 +71,20 @@ async function getAuthClient() {
     const tokenPath = process.env.GOOGLE_CALENDAR_TOKEN || 
                       path.resolve(process.cwd(), 'token.json');
     
+    // 檢查文件是否存在
+    try {
+      await fs.access(credentialsPath);
+    } catch (error) {
+      throw new Error(`Credentials file not found at ${credentialsPath}. Please create Google API credentials first.`);
+    }
+    
     const credentials = JSON.parse(await fs.readFile(credentialsPath, 'utf8'));
+    
+    // 檢查憑證格式
+    if (!credentials.installed && !credentials.web) {
+      throw new Error('Invalid credentials format. Make sure your credentials.json contains valid OAuth2 client information.');
+    }
+    
     const { client_secret, client_id, redirect_uris } = credentials.installed || credentials.web;
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
     
