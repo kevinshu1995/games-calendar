@@ -252,36 +252,50 @@ async function createEvents(calendar, calendarId, tournaments, sportId) {
   
   for (const tournament of tournaments) {
     try {
-      // 創建事件
-      await calendar.events.insert({
+      // 檢查是否已存在相同名稱和日期範圍的事件
+      const existingEvents = await calendar.events.list({
         calendarId,
-        requestBody: {
-          summary: tournament.name,
-          location: formatLocation(tournament.location),
-          description: tournament.description,
-          start: {
-            date: formatDate(tournament.dateStart),
-            timeZone: 'UTC'
-          },
-          end: {
-            date: formatDate(tournament.dateEnd, true),  // 加一天，因為 Google 日曆全天事件的結束日期是不包含的
-            timeZone: 'UTC'
-          },
-          transparency: 'transparent',  // 不顯示為"忙碌"
-          visibility: 'public',
-          source: {
-            title: `${getSourceName(sportId)} Calendar`,
-            url: tournament.url || ''
-          }
-        }
+        timeMin: new Date(tournament.dateStart).toISOString(),
+        timeMax: new Date(tournament.dateEnd).toISOString(),
+        q: tournament.name,
+        singleEvents: true
       });
+
+      // 如果沒有找到相同名稱和日期範圍的事件，則創建新事件
+      if (!existingEvents.data.items || existingEvents.data.items.length === 0) {
+        await calendar.events.insert({
+          calendarId,
+          requestBody: {
+            summary: tournament.name,
+            location: formatLocation(tournament.location),
+            description: tournament.description,
+            start: {
+              date: formatDate(tournament.dateStart),
+              timeZone: 'UTC'
+            },
+            end: {
+              date: formatDate(tournament.dateEnd, true),
+              timeZone: 'UTC'
+            },
+            transparency: 'transparent',
+            visibility: 'public',
+            source: {
+              title: `${getSourceName(sportId)} Calendar`,
+              url: tournament.url || ''
+            }
+          }
+        });
+        console.log(`Created event for tournament: ${tournament.name}`);
+      } else {
+        console.log(`Event already exists for tournament: ${tournament.name}`);
+      }
     } catch (error) {
-      console.error(`Error creating event for tournament ${tournament.name}:`, error);
+      console.error(`Error processing event for tournament ${tournament.name}:`, error);
       // 繼續處理其他賽事，不中斷整個流程
     }
   }
   
-  console.log(`Created ${tournaments.length} events for ${sportId}`);
+  console.log(`Finished processing ${tournaments.length} events for ${sportId}`);
 }
 
 /**
