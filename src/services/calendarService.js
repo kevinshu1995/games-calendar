@@ -2,6 +2,7 @@ import { google } from 'googleapis';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { authorize } from '../utils/authenticate.js';
 
 // 獲取當前目錄
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -65,46 +66,11 @@ export async function createOrUpdateCalendar(sportId, data) {
  */
 async function getAuthClient() {
   try {
-    // 讀取憑證文件
-    const credentialsPath = process.env.GOOGLE_CALENDAR_CREDENTIALS || 
-                            path.resolve(process.cwd(), 'credentials.json');
-    const tokenPath = process.env.GOOGLE_CALENDAR_TOKEN || 
-                      path.resolve(process.cwd(), 'token.json');
-    
-    // 檢查文件是否存在
-    try {
-      await fs.access(credentialsPath);
-    } catch (error) {
-      throw new Error(`Credentials file not found at ${credentialsPath}. Please create Google API credentials first.`);
-    }
-    
-    const credentials = JSON.parse(await fs.readFile(credentialsPath, 'utf8'));
-    
-    // 檢查憑證格式
-    if (!credentials.installed && !credentials.web) {
-      throw new Error('Invalid credentials format. Make sure your credentials.json contains valid OAuth2 client information.');
-    }
-    
-    const { client_secret, client_id, redirect_uris } = credentials.installed || credentials.web;
-    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-    
-    // 檢查是否已有令牌
-    try {
-      const token = JSON.parse(await fs.readFile(tokenPath, 'utf8'));
-      oAuth2Client.setCredentials(token);
-      return oAuth2Client;
-    } catch (err) {
-      // 如果是在 GitHub Action 環境中執行，嘗試從環境變數獲取令牌
-      if (process.env.GITHUB_ACTIONS && process.env.GOOGLE_TOKEN) {
-        oAuth2Client.setCredentials(JSON.parse(process.env.GOOGLE_TOKEN));
-        return oAuth2Client;
-      }
-      
-      // 否則拋出錯誤，需要手動獲取令牌
-      throw new Error(
-        'No token available. Please run the authentication script first to generate a token.'
-      );
-    }
+    // 使用 authenticate.js 中的 authorize 函數獲取認證
+    console.log('Getting Google API auth client...');
+    const auth = await authorize();
+    console.log('Successfully obtained auth client');
+    return auth;
   } catch (error) {
     console.error('Error getting auth client:', error);
     throw error;

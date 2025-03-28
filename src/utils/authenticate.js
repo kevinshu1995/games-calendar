@@ -1,7 +1,6 @@
 import { google } from 'googleapis';
 import fs from 'fs/promises';
 import path from 'path';
-import readline from 'readline';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
@@ -21,98 +20,109 @@ const TOKEN_PATH = process.env.GOOGLE_CALENDAR_TOKEN ||
                    path.resolve(process.cwd(), 'token.json');
 
 /**
- * 創建 OAuth2 客戶端並獲取 token
+ * 使用服務帳戶進行認證
+ * 這種方法適用於在無頭環境（如 GitHub Actions）中運行
  */
-async function authenticate() {
+export async function authorize() {
   try {
-    console.log('Reading credentials from:', CREDENTIALS_PATH);
-    const content = await fs.readFile(CREDENTIALS_PATH, 'utf8');
-    const credentials = JSON.parse(content);
-    console.log('credentials', credentials)
+    console.log('使用服務帳戶認證...');
     
-    await getAccessToken(credentials);
-  } catch (err) {
-    console.error('Error loading client credentials:', err);
-    console.log('');
-    console.log('Please follow these steps to set up Google Calendar API:');
-    console.log('1. Go to https://console.cloud.google.com/');
-    console.log('2. Create a new project');
-    console.log('3. Enable the Google Calendar API');
-    console.log('4. Create OAuth 2.0 credentials');
-    console.log('5. Download the credentials as JSON');
-    console.log('6. Save the JSON file as "credentials.json" in the project root');
-    console.log('7. Run this script again');
-    process.exit(1);
-  }
-}
-
-/**
- * 獲取並儲存 access token
- * @param {Object} credentials - OAuth2 憑證
- */
-async function getAccessToken(credentials) {
-  const { client_secret, client_id, redirect_uris } = credentials.installed || credentials.web;
-  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-
-  try {
-    // 檢查是否已有 token
-    const token = await fs.readFile(TOKEN_PATH, 'utf8');
-    oAuth2Client.setCredentials(JSON.parse(token));
-    console.log('Existing token found and loaded.');
+    // 首先檢查 credentials.json 文件是否存在
+    try {
+      await fs.access(CREDENTIALS_PATH);
+    } catch (err) {
+      throw new Error(`憑證文件 ${CREDENTIALS_PATH} 不存在，請先創建服務帳戶並下載金鑰`);
+    }
     
-    // 檢查 token 是否有效
-    const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
-    await calendar.calendarList.list();
-    console.log('Token is valid.');
+    // 讀取憑證文件
+    const credentials = JSON.parse(await fs.readFile(CREDENTIALS_PATH));
     
-    return oAuth2Client;
-  } catch (err) {
-    return await getNewToken(oAuth2Client);
-  }
-}
-
-/**
- * 獲取新的 token
- * @param {google.auth.OAuth2} oAuth2Client - OAuth2 客戶端
- */
-async function getNewToken(oAuth2Client) {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  });
-  
-  console.log('Authorize this app by visiting this url:', authUrl);
-  
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  
-  const code = await new Promise((resolve) => {
-    rl.question('Enter the code from that page here: ', (code) => {
-      rl.close();
-      resolve(code);
+    // 使用服務帳戶憑證創建 JWT 客戶端
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: SCOPES
     });
-  });
-  
+    
+    // 獲取客戶端
+    const client = await auth.getClient();
+    console.log('服務帳戶認證成功!');
+    
+    // 將認證信息保存到 token.json (非必要，但保持一致性)
+    await fs.writeFile(TOKEN_PATH, JSON.stringify({
+      type: 'service_account',
+      project_id: credentials.project_id,
+      private_key_id: credentials.private_key_id,
+      client_email: credentials.client_email,
+      token_uri: credentials.token_uri
+    }));
+    
+    return client;
+  } catch (error) {
+    console.error('認證失敗:', error);
+    throw error;
+  }
+}
+
+/**
+ * 設置日曆訪問權限
+ * 對於服務帳戶，需要手動授予日曆的訪問權限
+ * @param {google.auth.OAuth2} auth - 認證客戶端
+ * @param {string} calendarId - 日曆 ID
+ */
+export async function shareCalendarWithServiceAccount(auth, calendarId = 'primary') {
   try {
-    const { tokens } = await oAuth2Client.getToken(code);
-    oAuth2Client.setCredentials(tokens);
+    const calendar = google.calendar({ version: 'v3', auth });
     
-    // 儲存 token 到本地檔案
-    await fs.writeFile(TOKEN_PATH, JSON.stringify(tokens));
-    console.log('Token stored to:', TOKEN_PATH);
+    // 獲取服務帳戶電子郵件
+    const credentials = JSON.parse(await fs.readFile(CREDENTIALS_PATH));
+    const serviceAccountEmail = credentials.client_email;
     
-    return oAuth2Client;
-  } catch (err) {
-    console.error('Error retrieving access token:', err);
-    throw err;
+    if (!serviceAccountEmail) {
+      throw new Error('無法獲取服務帳戶電子郵件');
+    }
+    
+    console.log(`共享日曆 ${calendarId} 給服務帳戶 ${serviceAccountEmail}...`);
+    
+    // 為服務帳戶添加日曆訪問權限
+    await calendar.acl.insert({
+      calendarId,
+      requestBody: {
+        role: 'writer',
+        scope: {
+          type: 'user',
+          value: serviceAccountEmail
+        }
+      }
+    });
+    
+    console.log('日曆訪問權限設置成功!');
+  } catch (error) {
+    console.error('設置日曆訪問權限失敗:', error);
+    throw error;
   }
 }
 
 // 如果直接執行此文件
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  authenticate().catch(console.error);
+  authorize()
+    .then(() => {
+      console.log('\n認證成功!');
+      console.log('\n重要提醒:');
+      console.log('使用服務帳戶時，您需要在 Google 日曆中手動授予該服務帳戶訪問權限。');
+      console.log('請前往 Google 日曆網頁版，在日曆共享設置中添加以下電子郵件:');
+      
+      // 嘗試讀取服務帳戶郵箱
+      fs.readFile(CREDENTIALS_PATH)
+        .then(content => {
+          const credentials = JSON.parse(content);
+          if (credentials.client_email) {
+            console.log(`  ${credentials.client_email}`);
+          }
+        })
+        .catch(() => {});
+    })
+    .catch(err => {
+      console.error('認證失敗:', err);
+      process.exit(1);
+    });
 }
-
-export { authenticate };

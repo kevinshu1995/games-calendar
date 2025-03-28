@@ -47,11 +47,13 @@ The service uses a central API index at `https://the-static-api.vercel.app/api/i
    ```
    npm install
    ```
-3. Set up Google API credentials:
+
+3. Set up Google API credentials using a Service Account:
    - Create a project in Google Cloud Console
    - Enable the Google Calendar API
-   - Create OAuth credentials and download the JSON file
-   - Save as `credentials.json` in the project root (this file is gitignored)
+   - Create a Service Account and download the JSON key
+   - Save the Service Account key as `credentials.json` in the project root (this file is gitignored)
+   - Share your Google Calendar with the Service Account email (look in the credentials.json file for `client_email`)
 
 4. Configure environment variables (create a `.env` file):
    ```

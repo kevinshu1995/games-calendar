@@ -19,6 +19,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/local-auth": "^3.0.1",
     "axios": "^1.8.4",
     "dotenv": "^16.4.7",
     "googleapis": "^148.0.0",
