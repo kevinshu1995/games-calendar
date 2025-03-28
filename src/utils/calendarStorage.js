@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 // 獲取當前目錄
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = path.join(__dirname, '../../data/calendars.json');
+const DATA_FILE = path.join(__dirname, '../../public/data/calendars.json');
 
 /**
  * 讀取日曆數據
@@ -13,7 +13,18 @@ const DATA_FILE = path.join(__dirname, '../../data/calendars.json');
 export async function loadCalendars() {
   try {
     const data = await fs.readFile(DATA_FILE, 'utf-8');
-    return JSON.parse(data);
+    const calendars = JSON.parse(data);
+    
+    // 將陣列轉換為物件格式
+    const calendarObj = {
+      calendars: {}
+    };
+    
+    calendars.forEach(calendar => {
+      calendarObj.calendars[calendar.sportId] = calendar;
+    });
+
+    return calendarObj;
   } catch (error) {
     console.error('Error loading calendar data:', error);
     return { calendars: {} };
@@ -27,7 +38,10 @@ export async function loadCalendars() {
  */
 export async function saveCalendars(data) {
   try {
-    await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    // 將物件格式轉換為陣列
+    const calendars = Object.values(data.calendars);
+    const dataStr = JSON.stringify(calendars, null, 2);
+    await fs.writeFile(DATA_FILE, dataStr, 'utf-8');
   } catch (error) {
     console.error('Error saving calendar data:', error);
     throw error;
@@ -54,9 +68,8 @@ export async function updateCalendarInfo(sportId, calendarId) {
  */
 export async function getAllCalendars() {
   const data = await loadCalendars();
-  return Object.entries(data.calendars).map(([sportId, calendar]) => ({
+  return Object.values(data.calendars).map(calendar => ({
     ...calendar,
-    sportId,
     publicUrl: calendar.id ? `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(calendar.id)}` : '',
     icalUrl: calendar.id ? `https://calendar.google.com/calendar/ical/${encodeURIComponent(calendar.id)}/public/basic.ics` : ''
   }));

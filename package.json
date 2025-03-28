@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "server": "node src/server.js",
     "lint": "eslint src/**/*.js",
     "preview": "http-server public",
     "remove-duplicates": "node scripts/removeDuplicateEvents.js"
