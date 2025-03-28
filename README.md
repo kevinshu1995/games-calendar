@@ -72,6 +72,29 @@ Run the service locally to test:
 npm run start
 ```
 
+### Duplicate Event Removal
+
+1. Run the service:
+   ```bash
+   npm start
+   ```
+
+2. To remove duplicate events from a calendar:
+   ```bash
+   npm run remove-duplicates <calendar-id>
+   ```
+   
+   For example, to remove duplicates from a calendar with ID "your-calendar-id":
+   ```bash
+   npm run remove-duplicates your-calendar-id
+   ```
+
+   This command will:
+   - List all events in the specified calendar
+   - Identify events with the same name and date range
+   - Keep only the first occurrence of each event and remove duplicates
+   - Show detailed statistics about the number of events processed and duplicates removed
+
 ### GitHub Action Integration
 
 To use this service with another GitHub repository:
