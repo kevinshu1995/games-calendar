@@ -93,12 +93,14 @@
     <script>
         async function fetchCalendars() {
             try {
-                // 使用相對路徑
                 const response = await fetch('/data/calendars.json');
                 if (!response.ok) {
                     throw new Error('Failed to fetch calendars');
                 }
                 const calendars = await response.json();
+                if (!Array.isArray(calendars)) {
+                    throw new Error('Invalid calendar data format');
+                }
                 displayCalendars(calendars);
             } catch (error) {
                 console.error('Error fetching calendars:', error);
