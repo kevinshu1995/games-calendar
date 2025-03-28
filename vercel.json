@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "name": "sports-calendar",
-  "public": false,
-  "cleanUrls": true,
-  "buildCommand": null,
-  "outputDirectory": "public"
-}
