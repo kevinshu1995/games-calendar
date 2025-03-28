@@ -19,9 +19,9 @@ const style = computed(() => ({
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <img src="/favicon.png" alt="Logo" class="w-8 h-8" />
-              <h1 class="text-xl font-bold translate-y-px hidden sm:block">
-                Games Calendar
-              </h1>
+              <h2 class="text-xl font-bold translate-y-px hidden sm:block">
+                Sports Calendar
+              </h2>
             </div>
             <TogglerDarkMode />
           </div>

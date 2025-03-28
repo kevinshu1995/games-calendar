@@ -1,5 +1,5 @@
 {
-  "name": "games-calendar",
+  "name": "sports-calendar",
   "version": "1.0.0",
   "description": "Service to fetch sports tournament data and create Google Calendar events",
   "main": "calendar-scripts/src/index.js",
