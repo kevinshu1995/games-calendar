@@ -183,13 +183,18 @@
         }
 
         function copyIcalUrl(event) {
-            const icalUrl = event.currentTarget.dataset.url;
+            const currentTarget = event.currentTarget
+            const icalUrl = currentTarget.dataset.url;
+            if (!icalUrl) {
+                console.error('No URL found in data-url attribute');
+                return;
+            }
             navigator.clipboard.writeText(icalUrl).then(() => {
-                event.currentTarget.textContent = 'Copied!';
-                event.currentTarget.classList.add('copied');
+                currentTarget.textContent = 'Copied!';
+                currentTarget.classList.add('copied');
                 setTimeout(() => {
-                    event.currentTarget.textContent = icalUrl;
-                    event.currentTarget.classList.remove('copied');
+                    currentTarget.textContent = icalUrl;
+                    currentTarget.classList.remove('copied');
                 }, 2000);
             }).catch(err => {
                 console.error('Failed to copy:', err);
@@ -198,14 +203,14 @@
         }
 
         // Load calendars when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchCalendars();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchCalendars();
             
             // Add click event listener to all ical-url elements
-            document.addEventListener('click', (event) => {
-                if (event.target.classList.contains('ical-url')) {
+            document.querySelectorAll('.ical-url').forEach(element => {
+                element.addEventListener('click', (event) => {
                     copyIcalUrl(event);
-                }
+                });
             });
         });
     </script>
