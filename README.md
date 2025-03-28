@@ -85,74 +85,42 @@ The service automatically:
 
 ### Local Development
 
-Run the service locally to test:
+1. Run the service locally:
+   ```bash
+   npm run cal:start
+   ```
 
-```bash
-npm run start
+2. For development with hot-reload:
+   ```bash
+   npm run cal:dev
+   ```
+
+3. To lint the code:
+   ```bash
+   npm run cal:lint
+   ```
+
+4. To preview the public calendar interface:
+   ```bash
+   npm run preview
+   ```
+
+5. To remove duplicate events from a calendar:
+   ```bash
+   npm run cal:remove-duplicates
+   ```
+
+## Project Structure
+
 ```
-
-### Duplicate Event Removal
-
-1. Run the service:
-   ```bash
-   npm start
-   ```
-
-2. To remove duplicate events from a calendar:
-   ```bash
-   npm run remove-duplicates <calendar-id>
-   ```
-   
-   For example, to remove duplicates from a calendar with ID "your-calendar-id":
-   ```bash
-   npm run remove-duplicates your-calendar-id
-   ```
-
-   This command will:
-   - List all events in the specified calendar
-   - Identify events with the same name and date range
-   - Keep only the first occurrence of each event and remove duplicates
-   - Show detailed statistics about the number of events processed and duplicates removed
-
-### GitHub Action Integration
-
-To use this service with another GitHub repository:
-
-1. Add the GitHub Action workflow file to your repository:
-
-```yaml
-# .github/workflows/update-calendars.yml
-name: Update Sports Calendars
-
-on:
-  schedule:
-    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
-  workflow_dispatch:     # Allow manual triggering
-
-jobs:
-  update-calendars:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: username/games-calendar@main
-        with:
-          google-credentials: ${{ secrets.GOOGLE_CALENDAR_CREDENTIALS }}
-          sports: "bwf"  # Comma-separated list of sports to update
+calendar-scripts/
+├── src/
+│   ├── adapters/      # API data adapters
+│   ├── services/      # Core services
+│   ├── utils/         # Utility functions
+│   └── index.js       # Main entry point
+└── scripts/           # Standalone scripts
 ```
-
-2. Add your Google Calendar credentials as a repository secret in GitHub
-
-## Extending for New Sports/APIs
-
-To add support for a new sport or API:
-
-1. Create a new adapter in `src/adapters/`
-2. Implement the standardized interface
-3. Register the new adapter in the adapter factory
-4. Update tests and documentation
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
