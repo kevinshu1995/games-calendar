@@ -2,13 +2,13 @@
   "name": "games-calendar",
   "version": "1.0.0",
   "description": "Service to fetch sports tournament data and create Google Calendar events",
-  "main": "src/index.js",
+  "main": "calendar-scripts/src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "lint": "eslint src/**/*.js",
+    "cal:start": "node calendar-scripts/src/index.js",
+    "cal:dev": "nodemon calendar-scripts/src/index.js",
+    "cal:lint": "eslint calendar-scripts/src/**/*.js",
     "preview": "http-server public",
-    "remove-duplicates": "node scripts/removeDuplicateEvents.js"
+    "cal:remove-duplicates": "node calendar-scripts/scripts/removeDuplicateEvents.js"
   },
   "keywords": [
     "calendar",

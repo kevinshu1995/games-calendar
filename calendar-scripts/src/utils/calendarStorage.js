@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 // 獲取當前目錄
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = path.join(__dirname, '../../public/data/calendars.json');
+const DATA_FILE = path.join(__dirname, '../../../public/data/calendars.json');
 
 /**
  * 讀取日曆數據
