@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import TogglerDarkMode from '@/components/TogglerDarkMode.vue'
+import Navigation from "@/components/Navigation.vue";
 </script>
 
 <template>
-  <div>
-    <TogglerDarkMode />
-  </div>
+  <Navigation />
+  <div></div>
 </template>
-
