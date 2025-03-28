@@ -1,15 +1,8 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "public/index.html",
-      "use": "@vercel/static-build"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1"
-    }
-  ]
+  "name": "games-calendar",
+  "public": false,
+  "cleanUrls": true,
+  "buildCommand": null,
+  "outputDirectory": "public"
 }
