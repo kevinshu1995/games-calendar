@@ -98,6 +98,13 @@ async function getOrCreateCalendar(calendar, sportId) {
     
     if (existingCalendar) {
       console.log(`Found existing calendar for ${sportId}: ${existingCalendar.id}`);
+      
+      // 確保現有日曆的權限設置是正確的
+      await updateCalendarAccessSettings(calendar, existingCalendar.id);
+      
+      // 顯示日曆訂閱資訊
+      displayCalendarInfo(existingCalendar);
+      
       return existingCalendar.id;
     }
     
@@ -111,21 +118,82 @@ async function getOrCreateCalendar(calendar, sportId) {
       }
     });
     
+    // 獲取創建的日曆 ID
+    const calendarId = newCalendar.data.id;
+    
     // 設置日曆顏色
     const colorId = CALENDAR_COLORS[sportId] || CALENDAR_COLORS.default;
     await calendar.calendarList.update({
-      calendarId: newCalendar.data.id,
+      calendarId: calendarId,
       requestBody: {
         colorId
       }
     });
     
-    console.log(`Created new calendar for ${sportId}: ${newCalendar.data.id}`);
-    return newCalendar.data.id;
+    // 設置日曆為公開可見
+    await updateCalendarAccessSettings(calendar, calendarId);
+    
+    // 獲取並顯示更新後的日曆信息
+    const updatedCalendar = await calendar.calendarList.get({
+      calendarId: calendarId
+    });
+    
+    // 顯示日曆訂閱資訊
+    displayCalendarInfo(updatedCalendar.data);
+    
+    console.log(`Created new calendar for ${sportId}: ${calendarId}`);
+    return calendarId;
   } catch (error) {
     console.error(`Error getting/creating calendar for ${sportId}:`, error);
     throw error;
   }
+}
+
+/**
+ * 更新日曆的訪問權限設置，確保公開可見但僅開發者可編輯
+ * @param {google.calendar} calendar - Google Calendar API 實例
+ * @param {string} calendarId - 日曆 ID
+ */
+async function updateCalendarAccessSettings(calendar, calendarId) {
+  try {
+    console.log(`Setting public access for calendar ${calendarId}...`);
+    
+    // 更新日曆的訪問控制列表 (ACL)
+    await calendar.acl.insert({
+      calendarId: calendarId,
+      requestBody: {
+        role: "reader",
+        scope: {
+          type: "default"  // "default" 表示所有人
+        }
+      }
+    });
+    
+    console.log('Calendar access settings updated successfully.');
+  } catch (error) {
+    console.error('Error updating calendar access settings:', error);
+    // 繼續處理，不中斷流程
+    console.log('Continuing with default access settings...');
+  }
+}
+
+/**
+ * 顯示日曆訂閱資訊
+ * @param {Object} calendar - 日曆對象
+ */
+function displayCalendarInfo(calendar) {
+  console.log('\n===== Calendar Subscription Information =====');
+  console.log(`Calendar Name: ${calendar.summary}`);
+  console.log(`Calendar ID: ${calendar.id}`);
+  
+  // 日曆的公開 URL 格式
+  const publicUrl = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(calendar.id)}`;
+  const icalUrl = `https://calendar.google.com/calendar/ical/${encodeURIComponent(calendar.id)}/public/basic.ics`;
+  
+  console.log('\nSubscription Links:');
+  console.log(`Public URL: ${publicUrl}`);
+  console.log(`iCal URL: ${icalUrl}`);
+  console.log('===========================================\n');
 }
 
 /**
