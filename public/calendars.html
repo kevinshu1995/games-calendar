@@ -93,7 +93,8 @@
     <script>
         async function fetchCalendars() {
             try {
-                const response = await fetch('/api/calendars');
+                // 使用相對路徑
+                const response = await fetch('/data/calendars.json');
                 if (!response.ok) {
                     throw new Error('Failed to fetch calendars');
                 }
