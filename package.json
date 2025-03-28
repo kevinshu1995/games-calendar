@@ -8,7 +8,10 @@
     "cal:dev": "nodemon calendar-scripts/src/index.js",
     "cal:lint": "eslint calendar-scripts/src/**/*.js",
     "preview": "http-server public",
-    "cal:remove-duplicates": "node calendar-scripts/scripts/removeDuplicateEvents.js"
+    "cal:remove-duplicates": "node calendar-scripts/scripts/removeDuplicateEvents.js",
+    "front:dev": "vite",
+    "front:build": "vue-tsc -b && vite build",
+    "front:preview": "vite preview"
   },
   "keywords": [
     "calendar",
@@ -25,12 +28,18 @@
     "dotenv": "^16.4.7",
     "express": "^4.18.2",
     "googleapis": "^148.0.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "vue": "^3.5.13"
   },
   "devDependencies": {
     "eslint": "^9.23.0",
     "http-server": "^14.1.1",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vue-tsc": "^2.2.4"
   },
   "type": "module"
 }

@@ -110,6 +110,23 @@ The service automatically:
    npm run cal:remove-duplicates
    ```
 
+## Frontend Development
+
+1. Start the development server:
+   ```bash
+   npm run front:dev
+   ```
+
+2. Build for production:
+   ```bash
+   npm run front:build
+   ```
+
+3. Preview the production build:
+   ```bash
+   npm run front:preview
+   ```
+
 ## Project Structure
 
 ```
