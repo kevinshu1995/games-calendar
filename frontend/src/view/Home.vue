@@ -2,6 +2,7 @@
 import InfoCards from "@/components/InfoCards.vue";
 import HeroSection from "@/components/SectionHero.vue";
 import SectionInfo from "@/components/SectionInfo.vue";
+import { Separator } from "@/components/ui/separator";
 </script>
 
 <template>
@@ -14,5 +15,6 @@ import SectionInfo from "@/components/SectionInfo.vue";
       <InfoCards />
     </div>
   </div>
+  <Separator />
   <SectionInfo />
 </template>

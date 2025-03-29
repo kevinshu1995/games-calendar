@@ -69,12 +69,15 @@ function onCopy(source: string) {
         <div class="grid grid-cols-2 gap-2">
           <Button variant="ghost" @click="onCopy(calendar.icalUrl)">
             iCal
-            <Icon icon="material-symbols:content-copy-sharp" />
+            <Icon
+              icon="material-symbols:content-copy-sharp"
+              class="opacity-50"
+            />
           </Button>
           <Button variant="link" as-child>
             <a :href="calendar.publicUrl" class="w-full" target="_blank"
               >View Calendar
-              <Icon icon="mdi:external-link" />
+              <Icon icon="mdi:external-link" class="opacity-50" />
             </a>
           </Button>
         </div>
