@@ -53,7 +53,7 @@ import { Button } from "@/components/ui/button";
       <div class="flex flex-col md:flex-row justify-center gap-2 w-full">
         <Button as-child>
           <RouterLink to="#calendars" class="inline-block text-lg md:text-xl">
-            Browse Calendar
+            Find your Sport
           </RouterLink>
         </Button>
         <Button variant="outline" as-child>
