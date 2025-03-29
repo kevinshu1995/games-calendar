@@ -2,6 +2,8 @@
 import { computed, ref } from "vue";
 import { useElementSize } from "@vueuse/core";
 import TogglerDarkMode from "@/components/TogglerDarkMode.vue";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@iconify/vue";
 
 const togglerRef = ref<HTMLElement>();
 const { height } = useElementSize(togglerRef);
@@ -23,7 +25,18 @@ const style = computed(() => ({
                 Sports Calendar
               </h2>
             </div>
-            <TogglerDarkMode />
+            <div>
+              <Button as-child variant="ghost" size="icon">
+                <a
+                  href="https://github.com/kevinshu1995/games-calendar"
+                  class="inline-block"
+                  target="_blank"
+                >
+                  <Icon icon="mdi:github" />
+                </a>
+              </Button>
+              <TogglerDarkMode />
+            </div>
           </div>
         </div>
       </div>

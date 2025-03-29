@@ -87,7 +87,7 @@ function onCopy(source: string) {
 
     <Card class="relative overflow-hidden">
       <div
-        class="w-full h-full absolute left-0 top-0 flex items-center justify-center bg-secondary/10 backdrop-blur z-50"
+        class="w-full h-full absolute left-0 top-0 flex items-center justify-center backdrop-blur-sm z-50"
         v-if="fetchState === 'success'"
       >
         <p class="font-bold text-xl text-muted-foreground">
