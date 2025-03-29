@@ -1,61 +1,69 @@
-# Sports Calendar Creator
+# Sports Calendar
 
-This service automatically fetches sports tournament data from various APIs and creates Google Calendar events for different types of tournaments. Each sport/tournament type gets its own separate Google Calendar.
+## Service Overview
 
-## Features
+Sports Calendar Creator is an automated sports event calendar management service that helps users easily track various sports events. We integrate multiple sports event APIs, automatically fetch event information, and create Google Calendar events, allowing users to view and manage event schedules anytime.
 
-- Fetches tournament data from multiple API sources
-- Creates and updates Google Calendars for different sports/tournaments
-- Abstracts different API formats through an adapter layer
-- Can be triggered via GitHub Actions from external repositories
-- Supports BWF (Badminton World Federation) tournaments out of the box
-- Extensible design to add support for more sports/APIs
-- Prevents duplicate event creation through event checking
-- Public calendar access with developer-only edit permissions
+### Main Services
 
-## Architecture
+- **Automatic Event Synchronization**: Automatically fetch the latest event information from various sports event sources
+- **Multi-platform Synchronization**: Achieve cross-platform calendar synchronization through Google Calendar
+- **Public Calendar Sharing**: Provide public calendar subscription links for easy sharing with others
+- **Real-time Updates**: Regularly update event information to ensure the calendar stays up-to-date
 
-The system is built with the following components:
+### Technical Stack
 
-1. **API Client**: Fetches data from the source APIs
-2. **Data Adapter Layer**: Converts various API formats into a standardized format
+- **Frontend Technology**: Vue.js, TypeScript, Vite
+- **Backend Technology**: Node.js, TypeScript
+- **API Integration**: Google Calendar API, Multiple Sports Event APIs
+- **Deployment Platform**: Vercel
+- **CI/CD**: GitHub Actions
+
+## Architecture Explanation
+
+The system consists of the following components:
+
+1. **API Client**: Retrieves data from source APIs
+2. **Data Adapter Layer**: Converts different API formats to a standard format
 3. **Calendar Service**: Creates and updates Google Calendar events
-4. **GitHub Action**: Allows the service to be triggered by other GitHub repositories
+4. **GitHub Action**: Allows triggering the service from an external GitHub repository
 
 ### Data Flow
 
 ```
-External GitHub Workflow → GitHub Action Trigger → API Client → Data Adapter → Calendar Service → Google Calendar
+External GitHub Workflow → GitHub Action Trigger → API Client → Data Adapter Layer → Calendar Service → Google Calendar
 ```
 
 ### API Integration
 
-The service uses a central API index at `https://the-static-api.vercel.app/api/index.json` to discover available sports data APIs. Currently supported APIs include:
+The service uses a central API index `https://the-static-api.vercel.app/api/index.json` to discover available sports event APIs. Currently supported APIs include:
 
 - BWF Tournament API (`/api/bwf/tournaments.json`) - Badminton World Federation tournaments
 
-## Setup Instructions
+## Installation and Setup
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v22 or higher)
 - Google Cloud Platform account with Calendar API enabled
 - GitHub account
 
-### Installation
+### Installation Steps
 
 1. Clone this repository
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
-3. Set up Google API credentials using a Service Account:
-   - Create a project in Google Cloud Console
+3. Set up Google API credentials:
+
+   - Create a project in the Google Cloud Console
    - Enable the Google Calendar API
-   - Create a Service Account and download the JSON key
-   - Save the Service Account key as `credentials.json` in the project root (this file is gitignored)
-   - Share your Google Calendar with the Service Account email (look in the credentials.json file for `client_email`)
+   - Create a service account and download the JSON key
+   - Save the service account key as `credentials.json` (this file is set to be ignored by git)
+   - Share your Google calendar with the service account email (found in `credentials.json`)
    - Ensure the calendar is set to public access while maintaining developer-only edit permissions
 
 4. Configure environment variables (create a `.env` file):
@@ -65,19 +73,20 @@ The service uses a central API index at `https://the-static-api.vercel.app/api/i
    API_BASE_URL=https://the-static-api.vercel.app
    ```
 
-### Calendar Access Settings
+### Calendar Access Setup
 
 By default, the service will:
-- Create public calendars that anyone can view
-- Restrict editing permissions to the service account only
-- Generate public subscription links (iCal and web) for calendar sharing
-- Maintain calendar color coding for different sports types
+
+- Create a publicly viewable calendar
+- Restrict edit permissions to the service account only
+- Generate a public subscription link (iCal and web) for calendar sharing
 
 ### Event Handling
 
 The service automatically:
+
 - Checks for existing events before creating new ones
-- Uses tournament name and date range to identify duplicates
+- Uses event names and date ranges to identify duplicate events
 - Prevents duplicate event creation while maintaining event history
 - Provides detailed logging for event creation and error handling
 
@@ -85,39 +94,45 @@ The service automatically:
 
 ### Local Development
 
-1. Run the service locally:
+1. Run the service:
+
    ```bash
    npm run cal:start
    ```
 
-2. For development with hot-reload:
+2. Development mode (hot reload):
+
    ```bash
    npm run cal:dev
    ```
 
-3. To lint the code:
+3. Code linting:
+
    ```bash
    npm run cal:lint
    ```
 
-4. To preview the public calendar interface:
+4. Preview the public calendar interface:
+
    ```bash
    npm run preview
    ```
 
-5. To remove duplicate events from a calendar:
+5. Remove duplicate events from the calendar:
    ```bash
    npm run cal:remove-duplicates
    ```
 
-## Frontend Development
+### Frontend Development
 
 1. Start the development server:
+
    ```bash
    npm run front:dev
    ```
 
-2. Build for production:
+2. Production build:
+
    ```bash
    npm run front:build
    ```
@@ -130,13 +145,26 @@ The service automatically:
 ## Project Structure
 
 ```
-calendar-scripts/
-├── src/
-│   ├── adapters/      # API data adapters
-│   ├── services/      # Core services
-│   ├── utils/         # Utility functions
-│   └── index.js       # Main entry point
-└── scripts/           # Standalone scripts
+├── frontend/            # Frontend application code
+│   ├── src/            # Source code directory
+│   │   ├── App.vue     # Main application component
+│   │   ├── assets/     # Static resources
+│   │   ├── components/  # Vue components
+│   │   ├── lib/        # Third-party libraries
+│   │   ├── main.ts     # Entry point
+│   │   ├── view/       # Page components
+│   │   └── vite-env.d.ts  # TypeScript environment configuration
+│   └── index.html      # HTML entry file
+├── public/             # Static resources
+│   └── data/          # Pre-generated calendar data
+├── vite.config.ts     # Vite configuration
+└── calendar-scripts/   # Backend service code
+    ├── src/           # Source code directory
+    │   ├── adapters/   # API data adapters
+    │   ├── services/   # Core services
+    │   ├── utils/      # Utility functions
+    │   └── index.js    # Main entry point
+    └── scripts/        # Standalone scripts
 ```
 
 ## License
