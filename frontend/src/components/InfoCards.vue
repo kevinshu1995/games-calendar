@@ -78,9 +78,14 @@ function onCopy(source: string) {
           </Button>
         </div>
         <Separator />
-        <Button variant="link" class="text-muted-foreground text-xs w-full">
-          <Icon icon="material-symbols:info" />
-          <span>What is iCal?</span>
+        <Button variant="link" as-child>
+          <a
+            href="#what-is-ical"
+            class="text-muted-foreground flex items-center justify-center gap-1 text-xs w-full"
+          >
+            <Icon icon="material-symbols:info" />
+            <span>What is iCal?</span>
+          </a>
         </Button>
       </CardContent>
     </Card>

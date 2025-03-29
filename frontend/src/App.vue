@@ -3,6 +3,7 @@ import Navigation from "@/components/BaseNavigation.vue";
 import InfoCards from "@/components/InfoCards.vue";
 import HeroSection from "@/components/SectionHero.vue";
 import BaseFooter from "@/components/BaseFooter.vue";
+import SectionInfo from "@/components/SectionInfo.vue";
 import { Toaster } from "@/components/ui/sonner";
 </script>
 
@@ -18,6 +19,7 @@ import { Toaster } from "@/components/ui/sonner";
         <InfoCards />
       </div>
     </div>
+    <SectionInfo />
     <!-- Footer -->
     <BaseFooter />
   </div>
