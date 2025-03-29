@@ -89,7 +89,7 @@ const supportApps = [
               Or any other iCal-compatible apps
             </p>
           </div>
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <Card v-for="app in supportApps" :key="app.name">
               <CardHeader class="flex items-center justify-center">
                 <img :src="app.icon" :alt="app.name" class="w-14 h-14" />

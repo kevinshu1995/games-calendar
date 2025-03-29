@@ -4,6 +4,7 @@ import { useElementSize } from "@vueuse/core";
 import TogglerDarkMode from "@/components/TogglerDarkMode.vue";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/vue";
+import { RouterLink } from "vue-router";
 
 const togglerRef = ref<HTMLElement>();
 const { height } = useElementSize(togglerRef);
@@ -25,7 +26,10 @@ const style = computed(() => ({
                 Sports Calendar
               </h2>
             </div>
-            <div>
+            <div class="flex items-center gap-0">
+              <Button as-child variant="ghost">
+                <RouterLink to="#calendars"> Calendar List </RouterLink>
+              </Button>
               <Button as-child variant="ghost" size="icon">
                 <a
                   href="https://github.com/kevinshu1995/games-calendar"

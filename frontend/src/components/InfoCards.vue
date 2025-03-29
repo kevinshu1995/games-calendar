@@ -59,6 +59,9 @@ function onCopy(source: string) {
 </script>
 
 <template>
+  <h2 id="calendars" class="font-bold text-4xl text-primary text-center mb-12">
+    Calendar List
+  </h2>
   <template v-if="fetchState === 'success'">
     <Card v-for="calendar in calendars" :key="calendar.id">
       <CardHeader>

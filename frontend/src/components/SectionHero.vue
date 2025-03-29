@@ -16,17 +16,17 @@ import { Button } from "@/components/ui/button";
             class="w-7 h-7"
           />
         </div>
-        <p class="text-xl italic font-bold">
+        <p class="text-sm sm:text-base md:text-xl italic font-bold">
           Your Ultimate Sports Event Organizer
         </p>
       </div>
       <h1
-        class="text-9xl font-bold uppercase text-center mb-6 flex flex-col -space-y-4"
+        class="text-6xl sm:text-8xl md:text-9xl font-bold uppercase text-center mb-6 flex flex-col md:-space-y-4"
       >
         <span>Sports</span><span class="text-primary">Calendar</span>
       </h1>
       <div class="text-center max-w-2xl space-y-8 mb-12">
-        <p class="text-2xl space-x-1">
+        <p class="text-xl md:text-2xl space-x-1">
           <span class="opacity-70 block"
             >Get sports schedules effortlessly! 🏆</span
           >
@@ -50,17 +50,24 @@ import { Button } from "@/components/ui/button";
         </p>
       </div>
 
-      <Button variant="ghost" as-child>
-        <a
-          href="https://github.com/kevinshu1995/games-calendar"
-          class="inline-block text-xl"
-          target="_blank"
-        >
-          <Icon icon="mdi:github" class="!size-6" />
-          Github Repo
-          <Icon icon="mdi:external-link" class="text-muted-foreground" />
-        </a>
-      </Button>
+      <div class="flex flex-col md:flex-row justify-center gap-2 w-full">
+        <Button as-child>
+          <RouterLink to="#calendars" class="inline-block text-lg md:text-xl">
+            Browse Calendar
+          </RouterLink>
+        </Button>
+        <Button variant="outline" as-child>
+          <a
+            href="https://github.com/kevinshu1995/games-calendar"
+            class="inline-block text-lg md:text-xl"
+            target="_blank"
+          >
+            <Icon icon="mdi:github" class="!size-6" />
+            Github Repo
+            <Icon icon="mdi:external-link" class="text-muted-foreground" />
+          </a>
+        </Button>
+      </div>
     </div>
   </div>
 </template>
