@@ -2,6 +2,8 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import BaseStepper from "@/components/BaseStepper.vue";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@iconify/vue";
 
 const steps = [
   {
@@ -27,14 +29,19 @@ const supportApps = [
   {
     name: "Google Calendar",
     icon: "/google_Calendar_icon.svg",
+    icalHelpLink:
+      "https://support.google.com/calendar/answer/37118?hl=en&co=GENIE.Platform%3DDesktop#zippy=%2Cexport-from-a-different-google-account",
   },
   {
     name: "Apple Calendar",
     icon: "/icon-apple-calendar.png",
+    icalHelpLink: "https://support.apple.com/en-au/guide/calendar/icl1023/mac",
   },
   {
     name: "Outlook",
     icon: "/icon-outlook-calendar.png",
+    icalHelpLink:
+      "https://support.microsoft.com/en-us/office/import-calendars-into-outlook-8e8364e1-400e-4c0f-a573-fe76b5a2d379",
   },
 ];
 </script>
@@ -89,13 +96,32 @@ const supportApps = [
               Or any other iCal-compatible apps
             </p>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <Card v-for="app in supportApps" :key="app.name">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Card
+              v-for="app in supportApps"
+              :key="app.name"
+              class="flex flex-col"
+            >
               <CardHeader class="flex items-center justify-center">
                 <img :src="app.icon" :alt="app.name" class="w-14 h-14" />
               </CardHeader>
-              <CardContent class="text-center">
-                {{ app.name }}
+              <CardContent class="grow flex flex-col">
+                <p class="text-center">
+                  {{ app.name }}
+                </p>
+                <Button as-child variant="link">
+                  <a
+                    :href="app.icalHelpLink"
+                    target="_blank"
+                    class="inline-block w-full mt-auto"
+                  >
+                    Official Guide
+                    <Icon
+                      icon="mdi:external-link"
+                      class="text-muted-foreground"
+                    />
+                  </a>
+                </Button>
               </CardContent>
             </Card>
           </div>
