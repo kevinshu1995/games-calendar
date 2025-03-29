@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Navigation from "@/components/BaseNavigation.vue";
 import InfoCards from "@/components/InfoCards.vue";
-import HeroSection from "@/components/HeroSection.vue";
+import HeroSection from "@/components/SectionHero.vue";
 import BaseFooter from "@/components/BaseFooter.vue";
 import { Toaster } from "@/components/ui/sonner";
 </script>
