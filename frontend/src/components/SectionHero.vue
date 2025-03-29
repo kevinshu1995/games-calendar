@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
+import { Button } from "@/components/ui/button";
 </script>
 
 <template>
@@ -24,7 +25,7 @@ import { Icon } from "@iconify/vue";
       >
         <span>Sports</span><span class="text-primary">Calendar</span>
       </h1>
-      <div class="text-center max-w-2xl space-y-8">
+      <div class="text-center max-w-2xl space-y-8 mb-12">
         <p class="text-2xl space-x-1">
           <span class="opacity-70 block"
             >Get sports schedules effortlessly! 🏆</span
@@ -47,10 +48,19 @@ import { Icon } from "@iconify/vue";
             >, keeping you up to date with smart event detection.</span
           >
         </p>
-        <p class="text-xl font-bold">
-          More sports coming soon! <span class="opacity-20">(MAYBE 😤)</span>
-        </p>
       </div>
+
+      <Button variant="ghost" as-child>
+        <a
+          href="https://github.com/kevinshu1995/games-calendar"
+          class="inline-block text-xl"
+          target="_blank"
+        >
+          <Icon icon="mdi:github" class="!size-6" />
+          Github Repo
+          <Icon icon="mdi:external-link" class="text-muted-foreground" />
+        </a>
+      </Button>
     </div>
   </div>
 </template>
