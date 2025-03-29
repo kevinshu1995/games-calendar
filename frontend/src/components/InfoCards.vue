@@ -13,6 +13,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "vue-sonner";
 import { Icon } from "@iconify/vue";
+import { RouterLink } from "vue-router";
 
 interface Calendar {
   id: string;
@@ -79,13 +80,13 @@ function onCopy(source: string) {
         </div>
         <Separator />
         <Button variant="link" as-child>
-          <a
-            href="#what-is-ical"
+          <RouterLink
+            to="#what-is-ical"
             class="text-muted-foreground flex items-center justify-center gap-1 text-xs w-full"
           >
             <Icon icon="material-symbols:info" />
             <span>What is iCal?</span>
-          </a>
+          </RouterLink>
         </Button>
       </CardContent>
     </Card>
